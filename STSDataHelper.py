@@ -1,12 +1,13 @@
 """
-TODO: add file description
+Here we identify the class InputBuilder as a utility class to prepare the input of RoBERTa model from STS benchmark
+We also identify a wrapper for the STS benchmark.
 """
 import torch
 import pandas as pd
 import csv
 
 
-class FeatureExtractor:
+class InputBuilder:
     def __init__(self, tokenizer, max_len):
         self.tokenizer = tokenizer
         self.max_len = max_len
@@ -53,7 +54,7 @@ class STSBenchmark(torch.utils.data.Dataset):
         self.max_len = max_len
         self.dataset_path = dataset_path
         self.dataset = self.read_data()
-        self.feature_extractor = FeatureExtractor(tokenizer, max_len)
+        self.inputBuilder = InputBuilder(tokenizer, max_len)
 
     def read_data(self):
         raw_data = pd.read_csv(self.dataset_path, sep="\t", names=list('1234567'), quoting=csv.QUOTE_NONE)
@@ -64,9 +65,9 @@ class STSBenchmark(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         example = self.dataset[idx]
-        input_ids, input_mask = self.feature_extractor.build_features(example)
+        input_ids, input_mask = self.inputBuilder.build_features(example)
         similarity = torch.tensor(example["similarity"], dtype=torch.float32)
-        return input_ids, input_mask, similarity
+        return input_ids, input_mask, similarity.unsqueeze(0)
 
     def __len__(self):
         return len(self.dataset)

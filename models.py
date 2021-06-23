@@ -1,6 +1,3 @@
-"""
-TODO: add file description
-"""
 import torch
 from transformers import RobertaModel
 
@@ -8,7 +5,7 @@ from transformers import RobertaModel
 class ROBERTAOnSTS(torch.nn.Module):
     def __init__(self, dropout_rate=0.3):
         super(ROBERTAOnSTS, self).__init__()
-        self.roberta = RobertaModel.from_pretrained('roberta-base')
+        self.base_model = RobertaModel.from_pretrained('roberta-base')
         self.d1 = torch.nn.Dropout(dropout_rate)
         self.l1 = torch.nn.Linear(768, 128)
         self.bn1 = torch.nn.LayerNorm(128)
@@ -18,7 +15,7 @@ class ROBERTAOnSTS(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.l2.weight)
 
     def forward(self, input_ids, attention_mask):
-        _, x = self.roberta(input_ids=input_ids, attention_mask=attention_mask)
+        _, x = self.base_model(input_ids=input_ids, attention_mask=attention_mask)
         x = self.d1(x)
         x = self.l1(x)
         x = self.bn1(x)
@@ -31,14 +28,14 @@ class ROBERTAOnSTS(torch.nn.Module):
 class ROBERTA_FT_MRPC(torch.nn.Module):
     def __init__(self, pretrained, dropout_rate=0.3):
         super(ROBERTA_FT_MRPC, self).__init__()
-        self.part_model = pretrained
+        self.base_model = pretrained
         self.l2 = torch.nn.Linear(128, 2)
         self.l3 = torch.nn.Softmax(1)
         torch.nn.init.xavier_uniform_(self.l2.weight)
 
     def forward(self, input_ids, attention_mask):
-        _, x = self.part_model(input_ids=input_ids, attention_mask=attention_mask)
+        _, x = self.base_model(input_ids=input_ids, attention_mask=attention_mask)
         x = self.l2(x)
         if not self.training:
             x = self.l3(x)
-        return x
+        return x, None  # return None value also for compatibility in train function

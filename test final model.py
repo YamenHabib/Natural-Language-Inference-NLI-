@@ -1,19 +1,19 @@
 """
-TODO: add file description
+Test final model and report train, validation and test accuracy on GLEU/MRPC dataset
 """
 
 import torch
 from argparse import ArgumentParser
 
 from transformers import RobertaTokenizer
-from glueDataHelper import FeatureExtractor
+from glueDataHelper import InputBuilder
 from datasets import load_dataset
-from utils import ModelManager
+from utils import ModelManager, set_device
 from models import ROBERTAOnSTS, ROBERTA_FT_MRPC
 
 
 def test_single_example(example, model, max_len):
-    feature_extractor = FeatureExtractor(tokenizer, max_len)
+    feature_extractor = InputBuilder(tokenizer, max_len)
     model.eval()
     input_ids, input_mask, _ = feature_extractor.build_features(example)
     input_ids = input_ids.reshape(1, -1)
@@ -21,6 +21,17 @@ def test_single_example(example, model, max_len):
     result = model(input_ids=input_ids.to(device), attention_mask=input_mask.to(device))
     result = result[0].detach().cpu()
     return result[0].detach().cpu().numpy(), torch.argmax(result).numpy()
+
+
+def run_model_on_raw_dataset(raw_data):
+    cnt = 0
+    for i in range(len(raw_data)):
+        example = raw_data[i]
+        prob, result = test_single_example(example, model, args.max_seq_length)
+        if example['label'] == result:
+            cnt += 1
+
+    return cnt / len(raw_data)
 
 
 if __name__ == "__main__":
@@ -33,16 +44,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Set device
-    if args.device == "cuda":
-        if torch.cuda.is_available():
-            device = torch.device('cuda')
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
-        else:
-            device = torch.device('cpu')
-            print("CUDA is not available, using CPU...")
-    else:
-        device = torch.device('cpu')
+    device = set_device(args.device)
 
     # Define Tokenizer
     tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
@@ -52,7 +54,7 @@ if __name__ == "__main__":
     raw_test_data = load_dataset('glue', 'mrpc', split='test')
 
     # Define model manager
-    manager = ModelManager(0, 0, args.models_dir)
+    manager = ModelManager(args.models_dir)
 
     # Define model
     model = ROBERTA_FT_MRPC(ROBERTAOnSTS())
@@ -60,34 +62,12 @@ if __name__ == "__main__":
 
     model = model.to(device)
     # Find test accuracy
-    print("Summary: ")
+    print("Model summary >>>> ")
     # Find train accuracy
-    cnt = 0
-    for i in range(len(raw_train_data)):
-        example = raw_train_data[i]
-        prob, result = test_single_example(example, model, args.max_seq_length)
-        if example['label'] == result:
-            cnt += 1
-
-    print(f"Train Accuracy = {cnt / len(raw_train_data)}")
+    print(f"Train Accuracy = {run_model_on_raw_dataset(raw_train_data)}")
 
     # Find validation accuracy
-    cnt = 0
-    for i in range(len(raw_val_data)):
-        example = raw_val_data[i]
-        prob, result = test_single_example(example, model, args.max_seq_length)
-        if example['label'] == result:
-            cnt += 1
-
-    print(f"Validtion Accuracy = {cnt / len(raw_val_data)}")
+    print(f"Validtion Accuracy = {run_model_on_raw_dataset(raw_val_data)}")
 
     # Find test accuracy
-    cnt = 0
-    for i in range(len(raw_test_data)):
-        example = raw_test_data[i]
-        _, result = test_single_example(example, model, args.max_seq_length)
-        if example['label'] == result:
-            cnt += 1
-
-    print(f"Test Accuracy = {cnt / len(raw_test_data)}")
-
+    print(f"Test Accuracy = {run_model_on_raw_dataset(raw_test_data)}")

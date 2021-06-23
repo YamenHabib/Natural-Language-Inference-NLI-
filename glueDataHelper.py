@@ -1,10 +1,11 @@
 """
-TODO: add file description
+Here we identify the class InputBuilder as a utility class to prepare the input of RoBERTa model from glue/MRPC dataset.
+We also identify a wrapper for the glue/MRPC dataset
 """
 import torch
 
 
-class FeatureExtractor:
+class InputBuilder:
     def __init__(self, tokenizer, max_len):
         self.tokenizer = tokenizer
         self.max_len = max_len
@@ -51,11 +52,11 @@ class GlueDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, max_len, tokenizer):
         self.max_len = max_len
         self.dataset = dataset
-        self.feature_extractor = FeatureExtractor(tokenizer, max_len)
+        self.input_builder = InputBuilder(tokenizer, max_len)
 
     def __getitem__(self, idx):
         example = self.dataset[idx]
-        input_ids, input_mask, label = self.feature_extractor.build_features(example)
+        input_ids, input_mask, label = self.input_builder.build_features(example)
         return input_ids, input_mask, label
 
     def __len__(self):

@@ -1,3 +1,4 @@
+torch~=1.9.0+cu111
 transformers~=3.1.0
 pandas~=1.0.5
 datasets~=1.8.0

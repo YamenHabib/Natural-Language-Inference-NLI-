@@ -1,18 +1,23 @@
 """
-TODO: add file description
+File name: utils.py
+This file provides 2 main utilities:
+1)  ModelManager class
+    Model Manager is used to load and save model weights.
+    It is also responsible for showing training progress and saving train and validation losses of the entire process.
+
+2)  set_device function
+    This function is used to safely set hardware accelerator to 'cuda' or 'cpu'
 """
 import torch
 import os
 
 
 class ModelManager:
-    def __init__(self, train_len, val_len, output_dir):
+    def __init__(self, output_dir):
         self.train_losses = []
         self.val_losses = []
         self.steps = []
         self.best_val_loss = float('Inf')
-        self.train_len = train_len
-        self.val_len = val_len
         self.output_dir = output_dir
 
     def save_checkpoint(self, filename, model, valid_loss):
@@ -41,11 +46,25 @@ class ModelManager:
         self.train_losses.append(train_loss)
         self.val_losses.append(val_loss)
         self.steps.append(step)
-        print('Epoch [{}/{}], step [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}'
-              .format(epoch + 1, num_epochs, step, num_epochs * self.train_len, train_loss, val_loss))
+        print('Epoch [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}'
+              .format(epoch + 1, num_epochs, train_loss, val_loss))
 
         # checkpoint
         if self.best_val_loss > val_loss:
             self.best_val_loss = val_loss
             self.save_checkpoint(save_as, model, self.best_val_loss)
             self.save_metrics(metric_file)
+
+
+def set_device(dev):
+    if dev == "cuda":
+        if torch.cuda.is_available():
+            device = torch.device('cuda')
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+        else:
+            device = torch.device('cpu')
+            print("CUDA is not available, using CPU...")
+    else:
+        device = torch.device('cpu')
+    return device
