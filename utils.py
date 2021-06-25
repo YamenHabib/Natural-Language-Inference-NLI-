@@ -8,6 +8,8 @@ This file provides 2 main utilities:
 2)  set_device function
     This function is used to safely set hardware accelerator to 'cuda' or 'cpu'
 """
+from datetime import datetime
+
 import torch
 import os
 
@@ -46,8 +48,8 @@ class ModelManager:
         self.train_losses.append(train_loss)
         self.val_losses.append(val_loss)
         self.steps.append(step)
-        print('Epoch [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}'
-              .format(epoch + 1, num_epochs, train_loss, val_loss))
+        print('[{}] -- Epoch [{}/{}], Train Loss: {:.4f}, Valid Loss: {:.4f}'
+              .format(datetime.now(), epoch + 1, num_epochs, train_loss, val_loss))
 
         # checkpoint
         if self.best_val_loss > val_loss:
