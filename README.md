@@ -27,7 +27,7 @@ All models are based on RoBERTa model. Few layers were added, then they were fin
 In order facilitate generation of our results, we provide all necessary details: 
 ### Requirements
 All required libraries are included in [requirements.txt](https://github.com/YamenHabib/Natural-Language-Inference-NLI-/blob/main/requirements.txt) file. A virtual environment could be created using this file (e.g. using Pycharm) to guarantee that there are no conflicts.
-### Training the models on STS Benchmark
+### Training on STS Benchmark
 You can train the model with the default parameters by running:
 ``` python
 python "training RoBERTa-based model on STS benchmark.py" 
@@ -37,7 +37,7 @@ For more details about parameters run:
 python "training RoBERTa-based model on STS benchmark.py" -h
 ```
 
-### Training the models on GLEU/MRPC
+### Training on GLEU/MRPC
 You can train the model with the default parameters by running:
 ``` python
 python "training RoBERTa-based model on MRPC.py"
@@ -60,7 +60,7 @@ python "fine-tuning on MRPC after training on STS.py" -h
 <i> NOTE: before running this part, you must have already trained the first model and saved its weights </i>
 
 ### Testing model on MRPC
-<i>NOTE: Please consider first downloading our trained modelы from [this external link](https://niuitmo-my.sharepoint.com/:f:/g/personal/308544_niuitmo_ru/EjfY5rWkudpIoUdJFMynKI8B2Cl8l6R4D9LY_TBlJGhb1g?e=rPAdDR) or train your own models. In the latter case you might need to change the name of weights file.</i>
+<i>NOTE: Please consider first downloading our trained models from [this external link](https://niuitmo-my.sharepoint.com/:f:/g/personal/308544_niuitmo_ru/EjfY5rWkudpIoUdJFMynKI8B2Cl8l6R4D9LY_TBlJGhb1g?e=rPAdDR) or train your own models. In the latter case you might need to change the name of weights file.</i>
 
 To test the model trained on MRPC data only run:
 ``` python
