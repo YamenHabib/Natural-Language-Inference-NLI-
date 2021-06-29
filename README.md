@@ -72,6 +72,7 @@ python "test final model.py" --f_model MRPC_after_STS_model.pkl --t_model MIXED
 ```
 
 ## Results:
+
   <tr>
      <th>     </th>              <th> Training on MRPC only </th> <th>Training on STS then fine-tuning on MRPC</th>
   </tr>
@@ -84,3 +85,4 @@ python "test final model.py" --f_model MRPC_after_STS_model.pkl --t_model MIXED
   <tr>
     <td>Test Accuracy</td>       <td> 85.68% </td>                <td> 88.23% </td>
   </tr>
+  
