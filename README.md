@@ -48,7 +48,7 @@ python "training RoBERTa-based model on MRPC.py" -h
 ```
 
 ### Fine tuning the model on MRPC after training it on STS benchmark
-I order to increase the model accuracy on MRPC dataset, we trained it first on STS benchmark then contined training on MRPC.
+In order to increase the model accuracy on MRPC dataset, we trained it first on STS benchmark then contined training on MRPC.
 You can train this model with our default parameters by running:
 ``` python
 python "fine-tuning on MRPC after training on STS.py"
@@ -59,3 +59,21 @@ python "fine-tuning on MRPC after training on STS.py" -h
 ```
 <i> NOTE: before running this part, you must have already trained the first model and saved its weights </i>
 
+### Testing model on MRPC
+<i>NOTE: Please consider first downloading our trained modelы from [this external link](https://niuitmo-my.sharepoint.com/:f:/g/personal/308544_niuitmo_ru/EjfY5rWkudpIoUdJFMynKI8B2Cl8l6R4D9LY_TBlJGhb1g?e=rPAdDR) or train your own models. In the latter case you might need to change the name of weights file.</i>
+
+To test the model trained on MRPC data only run:
+``` python
+python "test final model.py" --f_model MRPC_model.pkl --t_model MRPC 
+```
+To test the model pretrained on STS then fine-tuned on MRPC run:
+``` python
+python "test final model.py" --f_model MRPC_after_STS_model.pkl --t_model MIXED 
+```
+
+## Results:
+                    |Training on MRPC only | Training on STS then fine-tuning on MRPC |
+    ---             |         ---          |                  ---                     |              
+Train Accuracy      |       92.15%         |                 99.45%                   |
+Validation Accuracy |       85.54%         |                 88.48%                   |
+Test Accuracy       |       85.68%         |                 88.23%                   |
