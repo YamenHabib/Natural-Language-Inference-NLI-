@@ -1,6 +1,6 @@
 # Natural-Language-Inference
 
-In this repository we are trying to solve [GLUE](https://gluebenchmark.com/) benchmark (mainly [MRPC](https://www.microsoft.com/en-us/download/details.aspx?id=52398) dataset) by fine-tuning [RoBERTa](https://huggingface.co/transformers/model_doc/roberta.html) model.
+In this repository we are trying to solve [GLUE](https://gluebenchmark.com/) benchmark (mainly [MRPC](https://www.microsoft.com/en-us/download/details.aspx?id=52398) dataset) by fine-tuning [RoBERTa](https://huggingface.co/transformers/model_doc/roberta.html) model. We also used [STS benchmark](http://ixa2.si.ehu.eus/stswiki/index.php/STSbenchmark) for pretraining the model and getting better results on the target dataset.
 
 ## MRPC dataset: 
 The Microsoft Research Paraphrase Corpus (Dolan & Brockett, 2005) is a corpus of sentence pairs automatically extracted from online news sources, with human annotations for whether the sentences in the pair are semantically equivalent.
@@ -20,6 +20,42 @@ Example from the training split:
  }
 ```
 
-In this notebook [Fine Tune RoBERTa on MRPC Dataset](https://github.com/YamenHabib/Natural-Language-Inference-NLI-/blob/main/Fine%20Tune%20RoBERTa%20on%20MRPC%20Dataset.ipynb) we added two fully connected layers to Roberta model and fine tuned it. we got a 97% acc on the training set and 86.2% on the testing set.
+## Trained models
+All models are based on RoBERTa model. Few layers were added, then they were fine-tuned on one of the above-mentioned datasets. For more details about the models architecture check the [project presentation](https://github.com/YamenHabib/Natural-Language-Inference-NLI-/blob/main/Presention.pptx).
 
-We managed to enhance the accuracy of the model by [pre-training](https://github.com/Alkhaddour/Natural-Language-Inference-NLI-/blob/main/Training%20RoBERTa-based%20model%20using%20STS.ipynb) it on [STS dataset](https://github.com/YamenHabib/Natural-Language-Inference-NLI-/tree/main/stsbenchmark) before [fine-tuning it](https://github.com/Alkhaddour/Natural-Language-Inference-NLI-/blob/main/RoBERTa-based%20model%20trained%20on%20STS%20and%20Fine-Tuned%20on%20MRPC.ipynb) on MRPC. We got a 99.5% acc on the training set and 88.2% on the testing set.
+## Models training and evaluation
+In order facilitate generation of our results, we provide all necessary details: 
+### Requirements
+All required libraries are included in [requirements.txt](https://github.com/YamenHabib/Natural-Language-Inference-NLI-/blob/main/requirements.txt) file. A virtual environment could be created using this file (e.g. using Pycharm) to guarantee that there are no conflicts.
+### Training the models on STS Benchmark
+You can train the model with the default parameters by running:
+``` python
+python "training RoBERTa-based model on STS benchmark.py" 
+```
+For more details about parameters run:
+``` python
+python "training RoBERTa-based model on STS benchmark.py" -h
+```
+
+### Training the models on GLEU/MRPC
+You can train the model with the default parameters by running:
+``` python
+python "training RoBERTa-based model on MRPC.py"
+```
+For more details about parameters run:
+``` python
+python "training RoBERTa-based model on MRPC.py" -h
+```
+
+### Fine tuning the model on MRPC after training it on STS benchmark
+I order to increase the model accuracy on MRPC dataset, we trained it first on STS benchmark then contined training on MRPC.
+You can train this model with our default parameters by running:
+``` python
+python "fine-tuning on MRPC after training on STS.py"
+```
+For more details about parameters run:
+``` python
+python "fine-tuning on MRPC after training on STS.py" -h
+```
+<i> NOTE: before running this part, you must have already trained the first model and saved its weights </i>
+
